@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Council — 2026 World Cup Winner</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --card:#ffffff; --ink:#1a1d24; --muted:#5b6472;
+    --line:#e4e7ec; --accent:#2f6fed; --agree:#16a34a; --clash:#e0803a;
+    --blind:#9333ea; --rec:#0f766e;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6;padding:32px 16px}
+  .wrap{max-width:820px;margin:0 auto}
+  header.top{text-align:center;margin-bottom:28px}
+  .kicker{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  h1{font-size:26px;margin:6px 0 4px}
+  .sub{color:var(--muted);font-size:15px}
+  .q{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:18px 20px;margin:0 0 24px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+  .q b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .verdict{background:linear-gradient(180deg,#ffffff,#fbfcfe);border:1px solid var(--line);
+    border-radius:14px;padding:24px;margin-bottom:24px;box-shadow:0 2px 8px rgba(20,30,60,.05)}
+  .pick{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+    border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:16px}
+  .pick .big{font-size:34px;font-weight:800;color:var(--accent);letter-spacing:-.5px}
+  .pick .cap{font-size:13px;color:var(--muted)}
+  .badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;
+    text-transform:uppercase;letter-spacing:.05em}
+  .sec{margin:18px 0}
+  .sec h3{font-size:14px;margin:0 0 6px;display:flex;align-items:center;gap:8px}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+  .sec p{margin:0;color:#2b303a;font-size:15px}
+
+  .spectrum{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:24px}
+  .spectrum h2{font-size:15px;margin:0 0 14px}
+  .row{display:flex;align-items:center;gap:12px;margin:10px 0}
+  .name{width:130px;font-weight:600;font-size:13px;flex-shrink:0}
+  .bar{flex:1;height:26px;background:#eef1f5;border-radius:6px;position:relative;overflow:hidden}
+  .fill{position:absolute;left:0;top:0;bottom:0;border-radius:6px;display:flex;align-items:center;
+    padding-left:10px;color:#fff;font-size:12px;font-weight:700}
+  .lean{font-size:12px;color:var(--muted);width:150px;flex-shrink:0}
+  .tally{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line);font-size:13px;color:var(--muted)}
+  .chip{display:inline-block;background:#eef2ff;color:#3452c9;border-radius:6px;padding:2px 8px;font-weight:700;font-size:12px;margin:0 2px}
+
+  details{background:var(--card);border:1px solid var(--line);border-radius:10px;margin:10px 0;overflow:hidden}
+  summary{cursor:pointer;padding:14px 18px;font-weight:600;font-size:14px;list-style:none;
+    display:flex;justify-content:space-between;align-items:center}
+  summary::-webkit-details-marker{display:none}
+  summary .who{display:flex;align-items:center;gap:10px}
+  summary .arrow{color:var(--muted);font-size:12px;transition:transform .2s}
+  details[open] summary .arrow{transform:rotate(90deg)}
+  .body{padding:0 18px 16px;font-size:14px;color:#2b303a;border-top:1px solid var(--line)}
+  .body p{margin:12px 0 0}
+  .tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;color:#fff}
+  .h2{font-size:16px;margin:30px 0 10px;color:var(--ink)}
+  footer{text-align:center;color:var(--muted);font-size:12px;margin-top:30px;padding-top:16px;border-top:1px solid var(--line)}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="kicker">LLM Council · Verdict</div>
+    <h1>Who wins the 2026 FIFA World Cup?</h1>
+    <div class="sub">Five advisors · anonymous peer review · chairman synthesis · 2026-07-11</div>
+  </header>
+
+  <div class="q">
+    <b>The question</b>
+    Who will win the 2026 FIFA World Cup? 48 teams, co-hosted by USA / Canada / Mexico, mid-June to mid-July — summer heat, altitude, and long continental travel. Predict the most likely winner.
+  </div>
+
+  <div class="verdict">
+    <div class="pick">
+      <span class="big">🇫🇷 France</span>
+      <span class="badge" style="background:#e7f0ff;color:#2f6fed">Modal pick · 4 of 5 advisors</span>
+      <span class="cap">…held with humility — ~75–84% chance it <i>isn't</i> France</span>
+    </div>
+
+    <div class="sec">
+      <h3><span class="dot" style="background:var(--agree)"></span>Where the council agrees</h3>
+      <p>Four of five independently landed on <b>France</b> from different paths — base rates, betting markets, squad depth, and Mbappé at his age-27 peak. All agreed the realistic winner pool is tiny (France, Spain, England, Argentina, Brazil) and no team exceeds ~15–20%.</p>
+    </div>
+
+    <div class="sec">
+      <h3><span class="dot" style="background:var(--clash)"></span>Where the council clashes</h3>
+      <p><b>France vs. Spain</b>, on what the conditions mean. The Contrarian says heat/altitude over eight matches rewards Spain's young, ball-dominant side. The France camp says <i>depth</i> — two starting XIs — is the real hedge against a hot-weather grind. Reviewers mostly sided with France; one called the Spain pick "vibes dressed as physiology."</p>
+    </div>
+
+    <div class="sec">
+      <h3><span class="dot" style="background:var(--blind)"></span>Blind spot the peer round caught</h3>
+      <p>Unanimous: <b>not one advisor priced the host-nation advantage</b> — despite it being in the prompt. Six hosts have won historically. The USA, acclimatized to its own summer heat with home crowds and zero travel, is underpriced by the whole council. The 48-team format also adds an <b>extra knockout round</b> that helps no favorite.</p>
+    </div>
+
+    <div class="sec">
+      <h3><span class="dot" style="background:var(--rec)"></span>The recommendation</h3>
+      <p><b>France</b> to win — deepest peak-age squad, proven system, Mbappé at 27. Sharpest <b>value: England</b> (near-favorite talent at a discount, softer bracket, Tuchel upgrade). Underrated wildcards the council slept on: host <b>USA</b> and 2022 semifinalists <b>Morocco</b> for a small flyer.</p>
+    </div>
+
+    <div class="sec">
+      <h3>⭐ The one thing to do first</h3>
+      <p>Filling a bracket today? <b>France to win, England as value runner-up, small flyer on a host/dark-horse (USA or Morocco)</b> — because the council's one collective blind spot was home advantage, and that's exactly where an edge hides.</p>
+    </div>
+  </div>
+
+  <div class="spectrum">
+    <h2>Advisor positions at a glance</h2>
+
+    <div class="row">
+      <div class="name">Outsider</div>
+      <div class="bar"><div class="fill" style="width:92%;background:#2f6fed">France — the boring favorite is usually right</div></div>
+    </div>
+    <div class="row">
+      <div class="name">First Principles</div>
+      <div class="bar"><div class="fill" style="width:80%;background:#3b82c4">France ~16% — but a distribution, field ~25%</div></div>
+    </div>
+    <div class="row">
+      <div class="name">Expansionist</div>
+      <div class="bar"><div class="fill" style="width:88%;background:#4f8fd0">France — two squads' worth of depth</div></div>
+    </div>
+    <div class="row">
+      <div class="name">Executor</div>
+      <div class="bar"><div class="fill" style="width:85%;background:#3b6fc4">France · value England · flyer Morocco</div></div>
+    </div>
+    <div class="row">
+      <div class="name">Contrarian</div>
+      <div class="bar"><div class="fill" style="width:70%;background:#e0803a">Spain — youngest, best-conditioned</div></div>
+    </div>
+
+    <div class="tally">
+      Tally: <span class="chip">France ×4</span> <span class="chip" style="background:#fdeee2;color:#c26a26">Spain ×1</span>
+      · Value flags: England, Morocco, USA (host) &nbsp;·&nbsp; Fade: Brazil
+    </div>
+  </div>
+
+  <h2 class="h2">Full advisor responses</h2>
+
+  <details>
+    <summary><span class="who"><span class="tag" style="background:#2f6fed">Outsider</span> France — the plain evidence</span><span class="arrow">▶</span></summary>
+    <div class="body"><p>The plain evidence says France. Two signals predict winners: the pre-tournament betting favorite and top FIFA ranking — both point at France/Spain/England/Argentina/Brazil. Since 1930, no team outside the established elite has ever won; the 48-team expansion just adds minnows for the giants to beat. France reached the last two finals, has the deepest pool, Mbappé at 27. The "host advantage / altitude / heat" storylines are overcomplicated — the co-hosts aren't championship-caliber. Caveat: any single team is only ~15–20%. If not France, Spain.</p></div>
+  </details>
+
+  <details>
+    <summary><span class="who"><span class="tag" style="background:#3b82c4">First Principles</span> A distribution, not a name</span><span class="arrow">▶</span></summary>
+    <div class="body"><p>A winner = squad strength distribution × knockout variance. Base rate: 8 nations have ever won in 22 editions; winning needs a deep peak-age core (25–29), not one star. European club infrastructure concentrates talent — that doesn't vanish. Expansion <i>reduces</i> early variance for top seeds. Honest output: France ~16%, England ~13%, Spain ~13%, Argentina ~11%, Brazil/Germany/Portugal ~7–8%, Field ~25%. The single most likely outcome is that none of the top picks wins. Forced pick: France — the highest slice of an irreducibly wide distribution.</p></div>
+  </details>
+
+  <details>
+    <summary><span class="who"><span class="tag" style="background:#4f8fd0">Expansionist</span> France's second wave</span><span class="arrow">▶</span></summary>
+    <div class="body"><p>Wrong lens to call France chokers. Mbappé turns 27 — dead center of his prime, undisputed alpha. The undervalued layer is beneath him: Zaïre-Emery, Doué, Barcola, Tel, Yoro — a second wave arriving before the first peaked. France can field two World Cup-caliber squads, and depth is the hidden currency in a heat-and-travel gauntlet. Floor is a semifinal; ceiling is the most dominant run since Spain 2010. The market overrates Argentina's aging spine. France at value.</p></div>
+  </details>
+
+  <details>
+    <summary><span class="who"><span class="tag" style="background:#3b6fc4">Executor</span> France · England · Morocco</span><span class="arrow">▶</span></summary>
+    <div class="body"><p><b>Primary: France</b> (+550/+650) — deepest pool, settled Deschamps system, Mbappé peak, two XIs for heat rotation. <b>Value: England</b> (~+700) — softer bracket, top-three talent (Bellingham, Saka, Foden, Kane), Tuchel removes passive knockout management; near-favorite quality at a discount. <b>Longshot: Morocco</b> (~+6600) — 2022 semifinalists, continuity, huge traveling support. Fade Brazil at their price. Decision: France to win, England as value, Morocco for the lottery ticket.</p></div>
+  </details>
+
+  <details>
+    <summary><span class="who"><span class="tag" style="background:#e0803a">Contrarian</span> Spain — fade the aging favorites</span><span class="arrow">▶</span></summary>
+    <div class="body"><p>Everyone's building on aging sand. Argentina's core will be 38+ in the heat; France already peaked and lost a final; Brazil hasn't reached a semifinal since 2014. The 48-team format means eight matches; altitude wrecks pressing; travel shreds recovery. This is won by the deepest, youngest, best-conditioned 26. Pick: Spain — reigning Euro champions, youngest elite core (Yamal, Cubarsí), and ball-dominant sides sweat less. Watch England, Morocco, and Portugal's next wave. The consensus is picking 2022's teams to win 2026's tournament.</p></div>
+  </details>
+
+  <details>
+    <summary><span class="who"><span class="tag" style="background:#9333ea">Peer review</span> highlights</span><span class="arrow">▶</span></summary>
+    <div class="body">
+      <p><b>Strongest response (4 of 5 reviewers):</b> the First Principles distribution — the only one that priced a "field" and resisted false certainty while still giving a forced pick.</p>
+      <p><b>Biggest blind spot (4 of 5):</b> the Outsider dismissing altitude/heat/travel as "overcomplicated" — that's the exact variable that makes 2026 different. One reviewer instead flagged the Contrarian's Spain pick as asserted physiology.</p>
+      <p><b>What ALL five missed (unanimous):</b> host-nation advantage (six hosts have won; USA at home is underpriced), the extra knockout round from the 48-team format (more upset variance, helps no favorite), venue-assignment luck (Mexico City altitude vs. cool northern stadiums), and 2025–26 club fatigue hitting the deep European squads everyone picked.</p>
+    </div>
+  </details>
+
+  <footer>
+    Counciled on 2026-07-11 · Question: 2026 FIFA World Cup winner · 5 advisors + anonymous peer review + chairman synthesis<br>
+    Methodology by Andrej Karpathy · LLM Council skill
+  </footer>
+
+</div>
+</body>
+</html>
