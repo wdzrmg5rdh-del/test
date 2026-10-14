@@ -102,6 +102,15 @@ export const POSES = {
   shieldLow: p({ uaN: 55, laN: 68, uaF: 30, laF: 130 }, CROUCH),
   shieldJump: p({ torso: 175, head: 180, thN: 75, shN: -22, thF: 45, shF: -55, uaN: 82, laN: 92, uaF: 100, laF: 150, ftN: 80, ftF: 80 }),
   shieldHit: p({ torso: 205, head: 214, uaN: 120, laN: 90, uaF: -150, laF: -130, thN: 32, shN: 12, thF: -10, shF: -6 }),
+
+  // Kampfrichter (Arm zeigt nach rechts auf die Kampffläche)
+  refStand: p({ torso: 176, head: 172, uaN: 20, laN: 60, uaF: 10, laF: 50, thN: 6, shN: 2, thF: -6, shF: -2, ftF: 90 }),
+  refBegin: p({ torso: 178, head: 176, uaN: 120, laN: 100, uaF: 10, laF: 50, thN: 8, shN: 2, thF: -8, shF: -2, ftF: 90 }),
+  refHalf: p({ torso: 180, head: 178, uaN: 92, laN: 92, uaF: 10, laF: 50, thN: 8, shN: 2, thF: -8, shF: -2, ftF: 90 }),
+  refFull: p({ torso: 182, head: 182, uaN: 135, laN: 138, uaF: 10, laF: 50, thN: 8, shN: 2, thF: -8, shF: -2, ftF: 90 }),
+  refWinner: p({ torso: 182, head: 184, uaN: 160, laN: 165, uaF: -20, laF: 10, thN: 8, shN: 2, thF: -8, shF: -2, ftF: 90 }),
+  refStop: p({ torso: 178, head: 176, uaN: 95, laN: 175, uaF: 85, laF: 170, thN: 8, shN: 2, thF: -8, shF: -2, ftF: 90 }),
+  refClash: p({ torso: 178, head: 176, uaN: 60, laN: 150, uaF: 120, laF: 30, thN: 8, shN: 2, thF: -8, shF: -2, ftF: 90 }),
 } satisfies Record<string, Pose>;
 
 export type PoseId = keyof typeof POSES;

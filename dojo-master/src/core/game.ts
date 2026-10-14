@@ -1,4 +1,6 @@
+import { AudioSystem } from '../audio/audio';
 import { InputManager } from '../input/input';
+import { Flow } from '../states/flow';
 import { loadKeyboardLayout } from '../input/bindings';
 import type { Surface } from '../render/surface';
 import type { GameState } from '../states/state';
@@ -12,6 +14,8 @@ export class Game {
   readonly screen: Screen;
   readonly input: InputManager;
   readonly loop: FixedLoop;
+  readonly audio = new AudioSystem();
+  readonly flow: Flow;
   debug = false;
   private state: GameState | null = null;
   private next: GameState | null = null;
@@ -26,10 +30,16 @@ export class Game {
       if (e.code === 'F9') Screen.toggleFullscreen();
       if (e.code === 'F3') this.debug = !this.debug;
     });
+    this.flow = new Flow(this);
     this.loop = new FixedLoop(
       () => this.update(),
       () => this.render(),
     );
+  }
+
+  /** Bester Eintrag der Bestenliste. */
+  highscore(): number {
+    return 0;
   }
 
   setState(s: GameState): void {
@@ -40,8 +50,8 @@ export class Game {
     return this.state;
   }
 
-  start(initial: GameState): void {
-    this.setState(initial);
+  start(initial?: GameState): void {
+    if (initial) this.setState(initial);
     this.loop.start();
   }
 

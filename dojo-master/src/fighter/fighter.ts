@@ -98,6 +98,13 @@ export class Fighter {
     return this.state === 'idle' || this.state === 'walk' || this.state === 'crouch' || this.state === 'block';
   }
 
+  /** Geduckte Haltung: hohe Angriffe gehen darüber hinweg. */
+  get isLow(): boolean {
+    if (this.state === 'crouch') return true;
+    if (this.state === 'attack' && this.attack) return this.attack.id === 'fussfeger' || this.attack.id === 'fauststossTief';
+    return false;
+  }
+
   get isDown(): boolean {
     return this.state === 'knockdown';
   }

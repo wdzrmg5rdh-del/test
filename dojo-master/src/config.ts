@@ -66,6 +66,10 @@ export const CONFIG = {
     startX: [176, 330, 484] as const,
     /** Halbe Körperbreite für die Kollision zwischen Kämpfern. */
     bodyHalfWidth: 11,
+    /** Blickrichtung der drei Kämpfer zu Rundenbeginn (1 = rechts, -1 = links). */
+    startFacing: [1, -1, -1] as const,
+    /** Standort des Kampfrichters am linken Rand der Kampffläche. */
+    refereeX: 24,
   },
 
   rules: {

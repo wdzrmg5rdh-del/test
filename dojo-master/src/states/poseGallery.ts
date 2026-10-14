@@ -1,7 +1,7 @@
 import { POSES, type PoseId } from '../data/poses';
 import { computeSkeleton, emptySkeleton } from '../fighter/skeleton';
 import { drawText } from '../render/font';
-import { drawFighter } from '../render/fighterRenderer';
+import { drawFighter, giLook } from '../render/fighterRenderer';
 import { rgb, type Surface } from '../render/surface';
 import type { GameState } from './state';
 
@@ -22,7 +22,7 @@ export class PoseGalleryState implements GameState {
       const x = 40 + col * 78, y = 110 + row * 118;
       s.fillRect(x - 36, y, 72, 1, rgb('#605040'));
       computeSkeleton(POSES[id], x, y, 1, skel);
-      drawFighter(s, skel, { gi: (['weiss', 'rot', 'blau'] as const)[row], belt: '#141414' }, 1);
+      drawFighter(s, skel, giLook((['weiss', 'rot', 'blau'] as const)[row], '#141414'), 1);
       drawText(s, id, x, y + 4, rgb('#000000'), { align: 'center' });
     });
   }

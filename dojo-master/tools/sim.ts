@@ -52,3 +52,63 @@ for (const id of Object.keys(ATTACKS)) check(reached.has(id), `Angriff ${id} nic
 
 console.log(failures === 0 ? 'Alle Prüfungen bestanden.' : `${failures} Fehler.`);
 if (failures > 0) throw new Error('Simulation fehlgeschlagen');
+
+// ---------------------------------------------------------------
+// Reichweitentest: Bei welchen Abständen trifft welcher Angriff?
+import { findCandidates } from '../src/combat/collision';
+import type { AttackId } from '../src/config';
+
+type TargetMode = 'stand' | 'crouch' | 'blockHoch' | 'blockTief' | 'jump';
+function hitRange(id: AttackId, mode: TargetMode): [number, number] | null {
+  const def = ATTACKS[id];
+  let lo = Infinity, hi = -Infinity;
+  for (let d = 22; d <= 130; d += 2) {
+    const ev = new EventSink();
+    const a = new Fighter(0, 'weiss', 300, 1, ev);
+    const tx = def.backward ? 300 - d : 300 + d;
+    const b = new Fighter(1, 'rot', tx, tx > 300 ? -1 : 1, ev);
+    const bIn = { ...emptyInput() };
+    if (mode === 'crouch') bIn.y = 1;
+    if (mode === 'blockHoch' || mode === 'blockTief') {
+      bIn.block = true;
+      if (mode === 'blockTief') bIn.y = 1;
+    }
+    for (let i = 0; i < 10; i++) b.update(bIn);
+    if (mode === 'jump') b.update({ ...emptyInput(), y: -1 });
+    a.startAttack(def);
+    let hit = false;
+    for (let i = 0; i < 80 && a.state === 'attack'; i++) {
+      a.update(emptyInput());
+      b.update(mode === 'jump' ? emptyInput() : bIn);
+      const c = findCandidates([a, b]).filter((x) => x.attacker === a);
+      if (c.length > 0) {
+        hit = !c[0].blocked;
+        if (c[0].blocked) a.onAttackBlocked(b.x);
+        break;
+      }
+    }
+    if (hit) {
+      lo = Math.min(lo, d);
+      hi = Math.max(hi, d);
+    }
+  }
+  return lo === Infinity ? null : [lo, hi];
+}
+
+const fmtR = (r: [number, number] | null) => (r ? `${r[0]}-${r[1]}` : '---');
+console.log('Angriff            stehend  geduckt  Abw.hoch Abw.tief springend');
+for (const id of Object.keys(ATTACKS) as AttackId[]) {
+  console.log(
+    id.padEnd(18),
+    fmtR(hitRange(id, 'stand')).padEnd(8),
+    fmtR(hitRange(id, 'crouch')).padEnd(8),
+    fmtR(hitRange(id, 'blockHoch')).padEnd(8),
+    fmtR(hitRange(id, 'blockTief')).padEnd(8),
+    fmtR(hitRange(id, 'jump')),
+  );
+}
+for (const id of Object.keys(ATTACKS) as AttackId[]) {
+  check(hitRange(id, 'stand') !== null, `${id} trifft keinen stehenden Gegner`);
+}
+check(hitRange('fussfeger', 'jump') === null, 'Fußfeger darf springende Gegner nicht treffen');
+console.log(failures === 0 ? 'Reichweitentest bestanden.' : `${failures} Fehler.`);
