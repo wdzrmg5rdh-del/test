@@ -166,9 +166,6 @@ export class AudioSystem {
         this.tone('square', 660, 660, 0.05, 0.15);
         this.tone('square', 1320, 1320, 0.07, 0.15, 0.05);
         break;
-      case 'schritt':
-        this.noise(0.02, 0.06, 'bandpass', 900, 900, 2);
-        break;
       case 'zeit':
         this.tone('square', 1200, 1200, 0.06, 0.15);
         break;

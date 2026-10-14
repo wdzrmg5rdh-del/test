@@ -206,22 +206,44 @@ export function resolveExchange(cands: HitCandidate[]): ExchangeResult {
   return { hit, blocked, clash };
 }
 
-/** Kämpfer können sich nicht durchdringen und die Kampffläche nicht verlassen. */
+/**
+ * Kämpfer können sich nicht durchdringen und die Kampffläche nicht verlassen.
+ * Überlappen sich zwei Kämpfer, wird die Korrektur im Verhältnis ihrer
+ * Bewegung in diesem Frame verteilt: Wer in einen stehenden Gegner läuft,
+ * wird gestoppt, statt ihn vor sich herzuschieben. Steht einer am Rand,
+ * übernimmt der andere die ganze Korrektur.
+ */
 export function separateFighters(fighters: readonly Fighter[]): void {
   const hw = CONFIG.arena.bodyHalfWidth;
-  for (let iter = 0; iter < 4; iter++) {
+  const { minX, maxX } = CONFIG.arena;
+  const atWall = (f: Fighter) => f.x <= minX + 0.01 || f.x >= maxX - 0.01;
+  for (let iter = 0; iter < 6; iter++) {
+    let any = false;
     for (let i = 0; i < fighters.length; i++) {
       for (let j = i + 1; j < fighters.length; j++) {
         const a = fighters[i], b = fighters[j];
         const dx = b.x - a.x;
         const overlap = 2 * hw - Math.abs(dx);
-        if (overlap <= 0) continue;
-        const dir = dx !== 0 ? Math.sign(dx) : a.slot < b.slot ? 1 : -1;
-        a.x -= (dir * overlap) / 2;
-        b.x += (dir * overlap) / 2;
+        if (overlap <= 0.001) continue;
+        any = true;
+        // Richtung aus der Lage vor dem Frame, damit niemand „durchrutscht“
+        const before = b.prevX - a.prevX;
+        const dir = before !== 0 ? Math.sign(before) : dx !== 0 ? Math.sign(dx) : a.slot < b.slot ? 1 : -1;
+        const sep = 2 * hw - (b.x - a.x) * dir;
+        let ma = Math.abs(a.x - a.prevX);
+        let mb = Math.abs(b.x - b.prevX);
+        if (atWall(a) && iter > 0) ma = 0;
+        if (atWall(b) && iter > 0) mb = 0;
+        let wa = 0.5;
+        if (ma + mb > 1e-6) wa = ma / (ma + mb);
+        if (iter > 0 && atWall(a) && !atWall(b)) wa = 0;
+        if (iter > 0 && atWall(b) && !atWall(a)) wa = 1;
+        a.x -= dir * sep * wa;
+        b.x += dir * sep * (1 - wa);
       }
     }
-    for (const f of fighters) f.x = Math.max(CONFIG.arena.minX, Math.min(CONFIG.arena.maxX, f.x));
+    for (const f of fighters) f.x = Math.max(minX, Math.min(maxX, f.x));
+    if (!any) break;
   }
   for (const f of fighters) f.refreshSkeleton();
 }

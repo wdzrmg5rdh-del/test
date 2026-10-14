@@ -243,3 +243,56 @@ console.log(sess.join('\n'));
 check(sess[sess.length - 1].startsWith('Spielende'), 'Spielverlauf endet nicht');
 check(sess.some((l) => l.includes('bonusA')) || sess.length < 6, 'Bonusrunde A wird nicht erreicht');
 console.log(failures === 0 ? 'Spielverlaufstest bestanden.' : `${failures} Fehler.`);
+
+// ---------------------------------------------------------------
+// Kollision: Wer läuft, schiebt einen stehenden Gegner nicht; Reihenfolge bleibt erhalten.
+import { separateFighters } from '../src/combat/collision';
+{
+  const ev = new EventSink();
+  const a = new Fighter(0, 'weiss', 300, 1, ev);
+  const b = new Fighter(1, 'rot', 330, -1, ev);
+  for (let i = 0; i < 120; i++) {
+    a.update({ ...emptyInput(), x: 1 });
+    b.update(emptyInput());
+    separateFighters([a, b]);
+  }
+  check(Math.abs(b.x - 330) < 0.01, `Stehender Gegner wurde verschoben (x=${b.x.toFixed(2)})`);
+  check(b.x - a.x >= 2 * CONFIG.arena.bodyHalfWidth - 0.01, 'Kämpfer überlappen');
+  // Salto vorwärts gegen einen Gegner: kein Durchdringen
+  const c = new Fighter(0, 'weiss', 300, 1, ev);
+  const d = new Fighter(1, 'rot', 340, -1, ev);
+  c.update({ ...emptyInput(), x: 1, y: -1 });
+  for (let i = 0; i < 60; i++) {
+    c.update(emptyInput());
+    d.update(emptyInput());
+    separateFighters([c, d]);
+    check(c.x < d.x, 'Salto durchdringt Gegner');
+  }
+  // Am Rand: Der Eingeklemmte bleibt stehen, der andere weicht.
+  const e = new Fighter(0, 'weiss', CONFIG.arena.minX, 1, ev);
+  const g = new Fighter(1, 'rot', CONFIG.arena.minX + 30, -1, ev);
+  for (let i = 0; i < 60; i++) {
+    e.update(emptyInput());
+    g.update({ ...emptyInput(), x: -1 });
+    separateFighters([e, g]);
+  }
+  check(e.x >= CONFIG.arena.minX && g.x - e.x >= 2 * CONFIG.arena.bodyHalfWidth - 0.01, 'Randkollision fehlerhaft');
+}
+// Reihenfolge der Kämpfer bleibt in KI-Runden erhalten
+{
+  let swaps = 0;
+  for (let i = 0; i < 10; i++) {
+    const rng = new Rng(4000 + i);
+    const ev = new EventSink();
+    const fs = [0, 1, 2].map((k) => new Fighter(k, (['weiss', 'rot', 'blau'] as const)[k], CONFIG.arena.startX[k], CONFIG.arena.startFacing[k], ev));
+    const r = new FightRound(fs, [0, 1, 2].map(() => new AIController(CONFIG.ai[6], rng.fork())), ['a', 'b', 'c'], rng.fork(), ev);
+    while (!r.isFinished) {
+      r.update();
+      ev.drain();
+      if (!(fs[0].x < fs[1].x && fs[1].x < fs[2].x)) swaps++;
+    }
+  }
+  check(swaps === 0, `Kämpfer haben sich ${swaps}-mal durchdrungen`);
+}
+console.log(failures === 0 ? 'Kollisionstest bestanden.' : `${failures} Fehler.`);
+if (failures > 0) throw new Error('Tests fehlgeschlagen');

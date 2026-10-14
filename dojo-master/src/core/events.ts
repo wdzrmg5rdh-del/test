@@ -20,7 +20,6 @@ export type SoundId =
   | 'guertel'
   | 'menue'
   | 'menueBestaetigen'
-  | 'schritt'
   | 'zeit';
 
 export class EventSink {

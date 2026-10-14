@@ -36,6 +36,8 @@ interface BufferedPress {
  */
 export class Fighter {
   x: number;
+  /** Position zu Beginn des letzten Logikschritts (für die Kollisionsauflösung). */
+  prevX: number;
   /** Höhe über dem Boden (Sprünge), 0 = am Boden. */
   air = 0;
   facing: 1 | -1;
@@ -77,6 +79,7 @@ export class Fighter {
     private readonly events: EventSink,
   ) {
     this.x = x;
+    this.prevX = x;
     this.facing = facing;
     this.updatePose();
   }
@@ -116,6 +119,7 @@ export class Fighter {
   /** Setzt den Kämpfer auf eine Ausgangsposition zurück. */
   reset(x: number, facing: 1 | -1): void {
     this.x = x;
+    this.prevX = x;
     this.facing = facing;
     this.air = 0;
     this.arc = null;
@@ -159,6 +163,7 @@ export class Fighter {
    */
   update(input: FrameInput | null): void {
     this.tick++;
+    this.prevX = this.x;
     this.stateFrame++;
     this.animFrame++;
     this.recordPresses(input);
@@ -291,7 +296,6 @@ export class Fighter {
     }
     const speed = dir === 1 ? MOVEMENT.walkForward : MOVEMENT.walkBack;
     this.x += this.facing * dir * speed * this.walkSpeedFactor;
-    if (this.stateFrame % 16 === 8) this.events.sound('schritt');
   }
 
   private startArc(arc: AirArc, anim: AnimId): void {

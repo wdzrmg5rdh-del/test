@@ -4,7 +4,6 @@ import type { AttackId } from './config';
 export const TEXT = {
   gameName: 'Dojo Master',
   subtitle: 'Karate für drei',
-  copyright: 'Privates Fanprojekt – nicht kommerziell',
 
   menu: {
     onePlayer: 'Ein Spieler',
@@ -31,14 +30,11 @@ export const TEXT = {
     on: 'An',
     off: 'Aus',
     fullscreen: 'Vollbild',
-    tieRule: 'Gleichstand',
     keysP1: 'Tasten Spieler 1',
     keysP2: 'Tasten Spieler 2',
     padP1: 'Gamepad Spieler 1',
     padP2: 'Gamepad Spieler 2',
     defaults: 'Standardbelegung',
-    resetScores: 'Bestenliste löschen',
-    resetDone: 'Gelöscht',
     defaultsDone: 'Wiederhergestellt',
     pressNewKey: 'Neue Taste drücken (ESC = Abbruch)',
     pressNewButton: 'Gamepadknopf drücken (ESC = Abbruch)',
@@ -53,11 +49,6 @@ export const TEXT = {
       kick: 'Tritt',
       block: 'Abwehr',
       pause: 'Pause',
-    },
-    tieRules: {
-      zuletztGepunktet: 'Letzter Punkt',
-      zuerstGepunktet: 'Erster Punkt',
-      losentscheid: 'Losentscheid',
     },
   },
 
@@ -134,10 +125,7 @@ export const TEXT = {
 
   hud: {
     highscore: 'Rekord',
-    score: 'Punkte',
-    belt: 'Gürtel',
     round: 'Runde',
-    time: 'Zeit',
     cpu: 'CPU',
   },
 
@@ -155,7 +143,6 @@ export const TEXT = {
     bonusIntro: 'Bonusrunde! Wehre die Bälle ab!',
     bonusIntroBombs: 'Bonusrunde! Vorsicht vor Bomben!',
     bonusEnd: 'Gut gemacht!',
-    nextRound: 'Runde {n}',
     beltUp: '{name}: neuer Gürtel – {belt}!',
   },
 
@@ -163,7 +150,6 @@ export const TEXT = {
     title: 'Rundenergebnis',
     place: '{n}. Platz',
     roundPoints: 'Rundenpunkte',
-    timeBonus: 'Zeitbonus',
     total: 'Gesamt',
     out: 'Ausgeschieden',
     continue: 'Weiter mit ENTER/Schlag',
@@ -174,7 +160,6 @@ export const TEXT = {
     titleA: 'Bonusrunde: Bälle',
     titleB: 'Bonusrunde: Bälle und Bomben',
     deflected: 'Abgewehrt',
-    hits: 'Getroffen',
     bombs: 'Bomben',
     points: 'Bonus',
   },
@@ -186,7 +171,6 @@ export const TEXT = {
     rounds: 'Runden',
     newHighscore: 'Neuer Eintrag in der Bestenliste!',
     enterName: 'Name eingeben: Tastatur oder ↑↓ Buchstabe, →← Position, ENTER fertig',
-    done: 'ENTER/Schlag: zum Titel',
   },
 
   highscores: {
@@ -196,11 +180,6 @@ export const TEXT = {
     score: 'Punkte',
     belt: 'Gürtel',
     empty: '---',
-  },
-
-  debug: {
-    on: 'Debug an',
-    seed: 'Seed',
   },
 
   audioHint: 'Ton startet nach dem ersten Tastendruck',

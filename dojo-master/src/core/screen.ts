@@ -25,6 +25,7 @@ export class Screen {
     this.ctx = canvas.getContext('2d', { alpha: false })!;
     window.addEventListener('resize', () => this.resize());
     document.addEventListener('fullscreenchange', () => this.resize());
+    document.addEventListener('webkitfullscreenchange', () => this.resize());
     this.resize();
   }
 
@@ -58,17 +59,22 @@ export class Screen {
   }
 
   static isFullscreen(): boolean {
-    return document.fullscreenElement != null;
+    const d = document as Document & { webkitFullscreenElement?: Element | null };
+    return (document.fullscreenElement ?? d.webkitFullscreenElement ?? null) !== null;
   }
 
-  /** Schaltet den Vollbildmodus um; Ablehnungen des Browsers werden still ignoriert. */
+  /** Schaltet den Vollbildmodus um (mit Fallback für ältere Safari-Versionen); Ablehnungen werden still ignoriert. */
   static toggleFullscreen(): void {
+    const d = document as Document & { webkitExitFullscreen?: () => void };
+    const el = document.documentElement as HTMLElement & { webkitRequestFullscreen?: () => void };
     try {
-      if (document.fullscreenElement) {
-        document.exitFullscreen().catch(() => undefined);
+      if (Screen.isFullscreen()) {
+        if (document.exitFullscreen) document.exitFullscreen().catch(() => undefined);
+        else d.webkitExitFullscreen?.();
+      } else if (el.requestFullscreen) {
+        el.requestFullscreen().catch(() => undefined);
       } else {
-        const p = document.documentElement.requestFullscreen?.();
-        if (p) p.catch(() => undefined);
+        el.webkitRequestFullscreen?.();
       }
     } catch {
       /* Vollbild nicht verfügbar */
