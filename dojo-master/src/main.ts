@@ -12,6 +12,8 @@ canvas.focus();
 if (import.meta.env.DEV && location.search.includes('posen')) {
   game.start(new PoseGalleryState(() => game.input.wasTapped('Space')));
 } else {
-  game.flow.newGame(new URLSearchParams(location.search).get('modus') === '2' ? 2 : 1);
+  const params = new URLSearchParams(location.search);
+  const bonus = import.meta.env.DEV ? params.get('bonus') : null;
+  game.flow.newGame(params.get('modus') === '2' ? 2 : 1, bonus === 'A' ? 'bonusA' : bonus === 'B' ? 'bonusB' : 'fight');
   game.start();
 }

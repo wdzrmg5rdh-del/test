@@ -164,3 +164,82 @@ for (const lv of [0, 2, 4, 6]) {
   console.log(`Stufe ${lv} gegen 2× Stufe 0: Siege ${wins}/${rounds}, Ø Halbpunkte ${(pts / rounds).toFixed(1)}, Ø Treffer gesamt ${(total / rounds).toFixed(1)}`);
 }
 console.log(failures === 0 ? 'Rundensimulation bestanden.' : `${failures} Fehler.`);
+
+// ---------------------------------------------------------------
+// Bonusrunden: Ablauf ohne Eingaben und mit einem einfachen Abwehr-Bot
+import { BonusRound } from '../src/rules/bonus';
+
+function simBonus(kind: 'A' | 'B', bot: boolean, players: number): { pts: number[]; defl: number[]; frames: number } {
+  const ev = new EventSink();
+  const ps = Array.from({ length: players }, (_, i) => ({ player: i as 0 | 1, gi: (i ? 'rot' : 'weiss') as 'rot' | 'weiss', beltIndex: 0 }));
+  const b = new BonusRound(kind, ps, new Rng(77), ev);
+  let frames = 0;
+  while (!b.isFinished && frames < 60 * 300) {
+    const inputs = b.players.map((p) => {
+      const inp = emptyInput();
+      if (!bot) return inp;
+      // Nächstes anfliegendes Objekt suchen und passend reagieren.
+      const f = p.fighter;
+      const near = b.objects
+        .filter((o) => o.state === 'fly' && Math.sign(f.x - o.x) === o.dir && Math.abs(o.x - f.x) < 120)
+        .sort((a, c) => Math.abs(a.x - f.x) - Math.abs(c.x - f.x))[0];
+      if (near) {
+        inp.x = near.dir === 1 ? -1 : 1;
+        if (near.kind === 'ball') inp.y = near.level === 'hoch' ? -1 : near.level === 'tief' ? 1 : 0;
+        else if (near.level === 'hoch') inp.y = 1;
+        else if (Math.abs(near.x - f.x) / near.speed <= 17) inp.kickPressed = true;
+      }
+      return inp;
+    });
+    b.update(inputs);
+    ev.drain();
+    frames++;
+  }
+  check(b.isFinished, `Bonusrunde ${kind} endet nicht`);
+  return { pts: b.players.map((p) => p.points), defl: b.players.map((p) => p.deflected), frames };
+}
+for (const kind of ['A', 'B'] as const) {
+  const idle = simBonus(kind, false, 1);
+  const bot = simBonus(kind, true, 1);
+  const two = simBonus(kind, true, 2);
+  console.log(`Bonus ${kind}: ohne Eingabe ${idle.pts} Pkt (${idle.defl} abgewehrt), Bot ${bot.pts} Pkt (${bot.defl}), 2 Spieler ${two.pts.join('/')} Pkt, Dauer ${(bot.frames / 60).toFixed(0)} s`);
+  check(bot.pts[0] > idle.pts[0], `Bonus ${kind}: Abwehr bringt keine Punkte`);
+}
+console.log(failures === 0 ? 'Bonustest bestanden.' : `${failures} Fehler.`);
+
+// ---------------------------------------------------------------
+// Spielverlauf: Runden, Bonusrunden, Gürtel und Ausscheiden (Spieler durch KI-Bot ersetzt)
+import { Session } from '../src/rules/session';
+
+function simSession(mode: 1 | 2, seed: number, botLevel: number): string[] {
+  const s = new Session(mode, seed);
+  const log: string[] = [];
+  const bot = { ...CONFIG.ai[botLevel], walkSpeedFactor: 1 };
+  for (let guard = 0; guard < 40; guard++) {
+    const ev = new EventSink();
+    const round = s.createRound(ev, (_slot, p, rng) => new AIController(p ? bot : CONFIG.ai[s.aiLevel], rng));
+    while (!round.isFinished) {
+      round.update();
+      ev.drain();
+    }
+    const sum = s.applyRoundResult(round.result!);
+    log.push(`R${s.round}:` + sum.lines.map((l) => `${l.name}${l.eliminated ? '(aus)' : ''}=${l.roundPoints}`).join(','));
+    for (const m of sum.messages) log.push('  ' + m);
+    let stage = s.nextStage();
+    if (stage === 'bonusA' || stage === 'bonusB') {
+      log.push(`  ${stage}`);
+      for (const p of s.activePlayers) s.addBonus(p.player, 500);
+      stage = s.nextStage();
+    }
+    if (stage === 'gameover') {
+      log.push(`Spielende: ${s.players.map((p) => `${p.score} (${CONFIG.belts[p.beltIndex].id})`).join(', ')}`);
+      break;
+    }
+  }
+  return log;
+}
+const sess = simSession(2, 99, 4);
+console.log(sess.join('\n'));
+check(sess[sess.length - 1].startsWith('Spielende'), 'Spielverlauf endet nicht');
+check(sess.some((l) => l.includes('bonusA')) || sess.length < 6, 'Bonusrunde A wird nicht erreicht');
+console.log(failures === 0 ? 'Spielverlaufstest bestanden.' : `${failures} Fehler.`);

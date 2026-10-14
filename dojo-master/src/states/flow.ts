@@ -1,5 +1,6 @@
 import type { Game } from '../core/game';
 import { Session, type Mode, type Stage } from '../rules/session';
+import { BonusState } from './bonusState';
 import { FightState } from './fightState';
 import type { GameState } from './state';
 
@@ -14,17 +15,21 @@ export class Flow {
     return (Date.now() ^ Math.floor(performance.now() * 1000)) >>> 0;
   }
 
-  newGame(mode: Mode): void {
+  newGame(mode: Mode, startStage: Stage = 'fight'): void {
     const session = new Session(mode, this.seed());
-    this.game.setState(new FightState(this.game, session));
+    this.toStage(session, startStage);
   }
 
   toStage(session: Session, stage: Stage): void {
     switch (stage) {
       case 'fight':
-      case 'bonusA':
-      case 'bonusB':
         this.game.setState(new FightState(this.game, session));
+        break;
+      case 'bonusA':
+        this.game.setState(new BonusState(this.game, session, 'A'));
+        break;
+      case 'bonusB':
+        this.game.setState(new BonusState(this.game, session, 'B'));
         break;
       case 'gameover':
         this.newGame(session.mode);

@@ -152,8 +152,8 @@ export const CONFIG = {
     /** Abzug bei Bombenkontakt. */
     bombPenalty: 100,
     /** Benommenheit nach Ball- oder Bombentreffer in Frames. */
-    stunFrames: 40,
-    bombStunFrames: 70,
+    stunFrames: 24,
+    bombStunFrames: 48,
     /** Positionen der Spieler in der Bonusrunde (1 bzw. 2 Spieler). */
     playerX1: [320],
     playerX2: [250, 390],
