@@ -112,3 +112,55 @@ for (const id of Object.keys(ATTACKS) as AttackId[]) {
 }
 check(hitRange('fussfeger', 'jump') === null, 'Fußfeger darf springende Gegner nicht treffen');
 console.log(failures === 0 ? 'Reichweitentest bestanden.' : `${failures} Fehler.`);
+
+// ---------------------------------------------------------------
+// Rundensimulation mit KI-Kämpfern: Determinismus und Stärke je Stufe
+import { AIController } from '../src/ai/ai';
+import { CONFIG } from '../src/config';
+import { Rng } from '../src/core/rng';
+import { FightRound } from '../src/rules/round';
+
+function simRound(seed: number, levels: number[]): { pts: number[]; first: number; frames: number; hash: number } {
+  const rng = new Rng(seed);
+  const ev = new EventSink();
+  const gis = ['weiss', 'rot', 'blau'] as const;
+  const fighters = [0, 1, 2].map((i) => {
+    const f = new Fighter(i, gis[i], CONFIG.arena.startX[i], CONFIG.arena.startFacing[i], ev);
+    f.walkSpeedFactor = CONFIG.ai[levels[i]].walkSpeedFactor;
+    return f;
+  });
+  const ctrls = levels.map((l) => new AIController(CONFIG.ai[l], rng.fork()));
+  const round = new FightRound(fighters, ctrls, ['W', 'R', 'B'], rng.fork(), ev);
+  let frames = 0;
+  let hash = 0;
+  while (!round.isFinished && frames < 60 * 120) {
+    round.update();
+    ev.drain();
+    frames++;
+    for (const f of fighters) hash = (Math.imul(hash, 31) + Math.round(f.x * 16)) | 0;
+  }
+  check(round.isFinished, `Runde (Seed ${seed}) endet nicht`);
+  return {
+    pts: fighters.map((f) => f.roundPoints),
+    first: round.result ? round.result.ranking[0].slot : -1,
+    frames,
+    hash,
+  };
+}
+
+const r1 = simRound(1234, [0, 3, 6]);
+const r2 = simRound(1234, [0, 3, 6]);
+check(r1.hash === r2.hash && r1.pts.join() === r2.pts.join(), 'Simulation ist nicht deterministisch');
+console.log('Determinismus:', r1.hash === r2.hash ? 'ok' : 'FEHLER', 'Punkte', r1.pts.join('/'));
+
+for (const lv of [0, 2, 4, 6]) {
+  let wins = 0, pts = 0, total = 0, rounds = 30;
+  for (let i = 0; i < rounds; i++) {
+    const r = simRound(1000 + i, [lv, 0, 0]);
+    if (r.first === 0) wins++;
+    pts += r.pts[0];
+    total += r.pts.reduce((a, b) => a + b, 0);
+  }
+  console.log(`Stufe ${lv} gegen 2× Stufe 0: Siege ${wins}/${rounds}, Ø Halbpunkte ${(pts / rounds).toFixed(1)}, Ø Treffer gesamt ${(total / rounds).toFixed(1)}`);
+}
+console.log(failures === 0 ? 'Rundensimulation bestanden.' : `${failures} Fehler.`);

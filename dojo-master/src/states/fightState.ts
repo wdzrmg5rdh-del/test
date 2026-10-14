@@ -1,8 +1,9 @@
 import { HumanController } from '../ai/human';
-import { IdleController } from '../ai/idle';
+import { AIController } from '../ai/ai';
 import type { Controller } from '../ai/controller';
 import { CONFIG } from '../config';
 import { EventSink } from '../core/events';
+import type { Rng } from '../core/rng';
 import type { Game } from '../core/game';
 import type { Fighter } from '../fighter/fighter';
 import { drawBackground } from '../render/background';
@@ -35,9 +36,9 @@ export class FightState implements GameState {
     this.round = this.session.createRound(this.events, (slot, player, rng) => this.makeController(slot, player, rng));
   }
 
-  private makeController(_slot: number, player: { player: 0 | 1 } | undefined, _rng: unknown): Controller {
+  private makeController(_slot: number, player: { player: 0 | 1 } | undefined, rng: Rng): Controller {
     if (player) return new HumanController(this.game.input, player.player);
-    return new IdleController();
+    return new AIController(CONFIG.ai[this.session.aiLevel], rng);
   }
 
   update(): void {
