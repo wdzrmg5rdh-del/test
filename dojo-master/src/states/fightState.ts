@@ -14,7 +14,7 @@ import { drawHud, drawPointSymbol } from '../render/hud';
 import { drawReferee, drawRefereeBubble } from '../render/refereeRenderer';
 import { rgb, type Surface } from '../render/surface';
 import type { FightRound } from '../rules/round';
-import type { RoundSummary, Session } from '../rules/session';
+import type { PlayerProfile, RoundSummary, Session } from '../rules/session';
 import { TEXT, fmt } from '../texts';
 import type { GameState } from './state';
 
@@ -25,6 +25,9 @@ export class FightState implements GameState {
   private summary: RoundSummary | null = null;
   private summaryFrame = 0;
   private frame = 0;
+  /** Menschliche Spieler je Platz zu Rundenbeginn (bleibt bis zum Rundenende sichtbar). */
+  private humans = new Map<number, PlayerProfile>();
+  private labels: string[] = [];
 
   constructor(
     private readonly game: Game,
@@ -33,6 +36,8 @@ export class FightState implements GameState {
 
   enter(): void {
     if (this.round) return;
+    for (const p of this.session.activePlayers) this.humans.set(p.slot, p);
+    this.labels = [0, 1, 2].map((slot) => this.session.hudLabel(slot));
     this.round = this.session.createRound(this.events, (slot, player, rng) => this.makeController(slot, player, rng));
   }
 
@@ -78,10 +83,10 @@ export class FightState implements GameState {
     }
     drawHud(s, {
       fighters: this.round.fighters.map((f) => {
-        const p = this.session.playerInSlot(f.slot);
+        const p = this.humans.get(f.slot);
         return {
           gi: f.gi,
-          label: this.session.hudLabel(f.slot),
+          label: this.labels[f.slot],
           roundPoints: f.roundPoints,
           human: !!p,
           score: p?.score ?? 0,

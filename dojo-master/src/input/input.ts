@@ -141,9 +141,11 @@ export class InputManager {
   }
 
   /** Menüeingaben aller Geräte zusammengefasst, mit Wiederholung bei gehaltener Richtung. */
-  sampleMenu(): MenuInput {
+  sampleMenu(useBindings = true): MenuInput {
     const k = (codes: string[]) => codes.some((c) => this.isDown(c));
-    const kb0 = this.keyBindings[0], kb1 = this.keyBindings[1];
+    const none = { up: [], down: [], left: [], right: [], punch: [], kick: [], block: [] };
+    const kb0 = useBindings ? this.keyBindings[0] : none;
+    const kb1 = useBindings ? this.keyBindings[1] : none;
     const p0 = this.padHeld(0), p1 = this.padHeld(1);
     const held = {
       up: k(kb0.up) || k(kb1.up) || k(['ArrowUp']) || p0.y < 0 || p1.y < 0,
@@ -153,7 +155,7 @@ export class InputManager {
       confirm:
         k(['Enter', 'NumpadEnter', 'Space']) || k(kb0.punch) || k(kb1.punch) || this.padBtn(0, 0) || this.padBtn(1, 0),
       back: k(['Escape']) || this.padBtn(0, 1) || this.padBtn(1, 1),
-      pause: k(['Escape', 'KeyP']) || p0.pause || p1.pause,
+      pause: k(['Escape']) || (useBindings && k(['KeyP'])) || p0.pause || p1.pause,
     };
     const prev = this.prevMenu;
     const res: MenuInput = {
