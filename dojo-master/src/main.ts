@@ -1,6 +1,11 @@
 import { Game } from './core/game';
 import { SandboxState } from './states/sandbox';
 import { PoseGalleryState } from './states/poseGallery';
+import { validateData } from './data/validate';
+
+if (import.meta.env.DEV) {
+  for (const e of validateData()) console.warn('Datenfehler:', e);
+}
 
 const canvas = document.getElementById('screen') as HTMLCanvasElement;
 const game = new Game(canvas);
